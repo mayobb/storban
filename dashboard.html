@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Inventario - AulaClave</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dashboard-body">
+    <header class="navbar">
+        <div class="logo">AulaClave | Panel de Control</div>
+        <button onclick="logout()" class="btn-login">Cerrar Sesión</button>
+    </header>
+
+    <main class="container">
+        <div class="dashboard-header">
+            <h2>Inventario Escolar</h2>
+            <button class="btn-primary" onclick="toggleModal(true)">+ Añadir Nuevo Objeto</button>
+        </div>
+
+        <div class="table-container">
+            <table class="inventory-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Profesor Asignado</th>
+                        <th>Cantidad</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-objetos"></tbody>
+            </table>
+        </div>
+    </main>
+
+
+
+<div id="modalInventario" class="modal">
+    <div class="modal-content" style="max-width: 500px;">
+        <span class="close-btn" onclick="toggleModal(false)">&times;</span>
+        <h3 style="margin-bottom: 20px;">Gestión de Objeto</h3>
+        
+        <form id="formInventario">
+            <div class="form-group">
+                <label>Nombre del objeto</label>
+                <input type="text" id="inv-nombre" required placeholder="Escribe el nombre">
+            </div>
+            
+            <div class="form-group">
+                <label>Profesor encargado*</label>
+                <input type="text" id="inv-profesor" required placeholder="Nombre del profesor">
+            </div>
+            
+            <div class="form-group">
+                <label>Cantidad disponible*</label>
+                <input type="number" id="inv-cantidad" required placeholder="Número total" min="1">
+            </div>
+
+            <div class="form-group">
+                <label>Estado</label>
+                <select id="inv-estado">
+                    <option value="bueno">Bueno</option>
+                    <option value="nuevo">Nuevo</option>
+                    <option value="dañado">Dañado</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px; border-radius: 50px;">
+                Guardar datos
+            </button>
+        </form>
+    </div>
+</div>
+
+    <script>
+        const modal = document.getElementById("modalInventario");
+
+        function toggleModal(show) {
+            modal.style.display = show ? "block" : "none";
+        }
+
+        // Cargar datos al iniciar
+        async function cargarInventario() {
+            const res = await fetch('http://localhost:3000/inventario');
+            const objetos = await res.json();
+            const tabla = document.getElementById("tabla-objetos");
+
+            tabla.innerHTML = objetos.map(obj => `
+                <tr class="table-row">
+                    <td><strong>${obj.nombre}</strong></td>
+                    <td style="color: var(--text-muted); font-weight: 500;">${obj.profesor_encargado || '<span style="color:#cbd5e1;font-style:italic">Sin asignar</span>'}</td>
+                    <td><span class="count-badge">${obj.cantidad}</span></td>
+                    <td><span class="status-badge ${obj.estado}">${obj.estado}</span></td>
+                    <td><button class="btn-action delete" title="Eliminar">🗑️</button></td>
+                </tr>
+            `).join('');
+        }
+
+        // Enviar datos al servidor
+        document.getElementById("formInventario").onsubmit = async (e) => {
+            e.preventDefault();
+            
+            const nuevoObjeto = {
+                nombre: document.getElementById("inv-nombre").value,
+                profesor: document.getElementById("inv-profesor").value,
+                cantidad: document.getElementById("inv-cantidad").value,
+                estado: document.getElementById("inv-estado").value,
+                categoria_id: 1 // Por defecto Tecnología
+            };
+
+            const res = await fetch('http://localhost:3000/añadir-objeto', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(nuevoObjeto)
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                toggleModal(false);
+                document.getElementById("formInventario").reset();
+                cargarInventario(); // Recarga la tabla automáticamente
+            }
+        };
+
+        function logout() { localStorage.clear(); window.location.href = "index.html"; }
+        cargarInventario();
+    </script>
+
+</body>
+
+</html>

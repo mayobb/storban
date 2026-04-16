@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AulaClave - Gestión de Inventario</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/your-code.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <header>
+        <nav class="navbar">
+            <div class="logo">AulaClave</div>
+            <ul class="nav-links">
+                <li><a href="#">Inicio</a></li>
+                <li><a href="#" class="btn-login">Acceder</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-overlay">
+            <div class="hero-content">
+                <h1>Gestión fácil</h1>
+                <p>Controla y actualiza el inventario del aula con acceso para profesores y login seguro.</p>
+                <a href="#" class="btn-primary">Comenzar ya</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="intro container">
+        <div class="intro-text">
+            <h2>Bienvenidos a aulaclave</h2>
+            <p>Gestiona el inventario del colegio con facilidad, asigna objetos y controla cada aula con acceso seguro para profesores.</p>
+        </div>
+        <div class="intro-stats">
+            <div class="stat-item">
+                <h3>150+</h3>
+                <p>Confiable y ágil</p>
+            </div>
+            <div class="stat-item">
+                <h3>15</h3>
+                <p>Fácil, útil, seguro</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="main-image container">
+        <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=1200" alt="Estudiantes en el aula">
+    </section>
+
+    <section class="services container">
+        <div class="section-title">
+            <h2>Nuestros servicios</h2>
+            <p>Gestiona el inventario del colegio con facilidad y control total</p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="card-text">
+                    <h3>Editar y asignar</h3>
+                    <p>Modifica detalles de los objetos y asigna profesores responsables con acceso seguro.</p>
+                </div>
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-151242855908e-56035ceaf52c?auto=format&fit=crop&q=80&w=600');"></div>
+            </div>
+            <div class="service-card">
+                <div class="card-text">
+                    <h3>Añadir objetos</h3>
+                    <p>Agrega nuevos materiales y equipos al inventario de forma rápida y sencilla.</p>
+                </div>
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=600');"></div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-container container">
+            <div class="footer-info">
+                <h4>Contacto</h4>
+                <p>Escríbenos para cualquier duda o sugerencia</p>
+                <div class="social-icons">
+                    <span>FB</span> <span>IG</span> <span>TK</span> <span>X</span>
+                </div>
+            </div>
+            <div class="footer-email">
+                <h4>EMAIL</h4>
+                <p>contacto@aulaclave.com</p>
+            </div>
+            <div class="footer-form">
+                <h4>TELÉFONO</h4>
+                <label for="name">Nombre del objeto</label>
+                <input type="text" id="name" placeholder="Escribe aquí">
+                <button class="btn-footer">Guardar</button>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026. All rights reserved.</p>
+        </div>
+    </footer>
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2>Iniciar Sesión</h2>
+        <form action="login.php" method="POST">
+            <label>Correo Institucional</label>
+            <input type="email" name="email" required placeholder="ejemplo@usc.edu.co">
+            
+            <label>Contraseña</label>
+            <input type="password" name="password" required placeholder="********">
+            
+            <button type="submit" class="btn-primary">Entrar al Sistema</button>
+        </form>
+    </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
