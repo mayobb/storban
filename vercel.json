@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/model/$1"
+    },
+    {
+      "source": "/",
+      "destination": "/model/index.html"
+    }
+  ]
+}
