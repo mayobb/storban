@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Inventario - AulaClave</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dashboard-body">
+    <header class="navbar">
+        <div class="logo">AulaClave | Panel de Control</div>
+        <button onclick="logout()" class="btn-login">Cerrar Sesión</button>
+    </header>
+
+    <main class="container">
+        <div class="dashboard-header">
+            <h2>Inventario Escolar</h2>
+            <button class="btn-primary" onclick="toggleModal(true)">+ Añadir Nuevo Objeto</button>
+        </div>
+
+        <div class="table-container">
+            <table class="inventory-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Profesor Asignado</th>
+                        <th>Cantidad</th>
+                        <th>Estado</th>
+                        <th>Código QR</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-objetos"></tbody>
+            </table>
+        </div>
+    </main>
+
+
+
+<div id="modalInventario" class="modal">
+    <div class="modal-content" style="max-width: 500px;">
+        <span class="close-btn" onclick="toggleModal(false)">&times;</span>
+        <h3 style="margin-bottom: 20px;">Gestión de Objeto</h3>
+        
+        <form id="formInventario">
+            <div class="form-group">
+                <label>Nombre del objeto</label>
+                <input type="text" id="inv-nombre" required placeholder="Escribe el nombre">
+            </div>
+            
+            <div class="form-group">
+                <label>Profesor encargado*</label>
+                <input type="text" id="inv-profesor" required placeholder="Nombre del profesor">
+            </div>
+            
+            <div class="form-group">
+                <label>Cantidad disponible*</label>
+                <input type="number" id="inv-cantidad" required placeholder="Número total" min="1">
+            </div>
+
+            <div class="form-group">
+                <label>Estado</label>
+                <select id="inv-estado">
+                    <option value="bueno">Bueno</option>
+                    <option value="nuevo">Nuevo</option>
+                    <option value="dañado">Dañado</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px; border-radius: 50px;">
+                Guardar datos
+            </button>
+        </form>
+    </div>
+</div>
+
+    <script type="module">
+        import { db } from "./firebase.js";
+        import { collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+        const modal = document.getElementById("modalInventario");
+
+        window.toggleModal = function(show) {
+            modal.style.display = show ? "block" : "none";
+        }
+
+        // Cargar datos al iniciar desde Firebase
+        async function cargarInventario() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "inventario"));
+                const tabla = document.getElementById("tabla-objetos");
+                let htmlContent = "";
+
+                querySnapshot.forEach((doc) => {
+                    const obj = doc.data();
+                    const estadoText = obj.estado ? obj.estado : 'bueno';
+                    const profeText = obj.profesor_encargado || obj.profesor || '<span style="color:#cbd5e1;font-style:italic">Sin asignar</span>';
+                    
+                    htmlContent += `
+                        <tr class="table-row">
+                            <td><strong>${obj.nombre}</strong></td>
+                            <td style="color: var(--text-muted); font-weight: 500;">${profeText}</td>
+                            <td><span class="count-badge">${obj.cantidad}</span></td>
+                            <td><span class="status-badge ${estadoText}">${estadoText}</span></td>
+                            <td><img src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=AulaClave-ID${doc.id}-${encodeURIComponent(obj.nombre)}" alt="QR" style="border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"></td>
+                            <td><button class="btn-action delete" title="Eliminar">🗑️</button></td>
+                        </tr>
+                    `;
+                });
+                tabla.innerHTML = htmlContent;
+            } catch (error) {
+                console.error("Error al cargar inventario: ", error);
+            }
+        }
+
+        // Enviar datos a Firebase
+        document.getElementById("formInventario").onsubmit = async (e) => {
+            e.preventDefault();
+            
+            const nuevoObjeto = {
+                nombre: document.getElementById("inv-nombre").value,
+                profesor_encargado: document.getElementById("inv-profesor").value,
+                cantidad: parseInt(document.getElementById("inv-cantidad").value),
+                estado: document.getElementById("inv-estado").value,
+                categoria: "Tecnología" // Por defecto Tecnología
+            };
+
+            try {
+                await addDoc(collection(db, "inventario"), nuevoObjeto);
+                window.toggleModal(false);
+                document.getElementById("formInventario").reset();
+                cargarInventario(); // Recarga la tabla
+            } catch (error) {
+                console.error("Error al guardar el objeto: ", error);
+                alert("Error al guardar en Firebase. Revisa la consola.");
+            }
+        };
+
+        window.logout = function() { localStorage.clear(); window.location.href = "index.html"; }
+        cargarInventario();
+    </script>
+
+</body>
+
+</html>
